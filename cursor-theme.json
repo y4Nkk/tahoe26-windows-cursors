@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "id": "tahoe26",
+  "name": "Tahoe 26",
+  "description": "受 macOS Tahoe 26 指针语言启发的原创深浅双色 Windows 光标主题。",
+  "sourceDirectory": "Cursors",
+  "defaultVariant": "dark",
+  "variants": [
+    { "id": "dark",  "label": "深色光标", "schemeName": "Tahoe 26 深色", "directory": "dark" },
+    { "id": "light", "label": "浅色光标", "schemeName": "Tahoe 26 浅色", "directory": "light" }
+  ],
+  "roles": [
+    { "registry": "Arrow",       "file": "arrow.cur",       "label": "正常选择",       "systemId": 32512 },
+    { "registry": "Help",        "file": "help.cur",        "label": "帮助选择",       "systemId": 32651 },
+    { "registry": "AppStarting", "file": "appstarting.ani", "label": "后台运行",       "systemId": 32650 },
+    { "registry": "Wait",        "file": "wait.ani",        "label": "忙",             "systemId": 32514 },
+    { "registry": "Crosshair",   "file": "crosshair.cur",   "label": "精确选择",       "systemId": 32515 },
+    { "registry": "IBeam",       "file": "ibeam.cur",       "label": "文本选择",       "systemId": 32513 },
+    { "registry": "NWPen",       "file": "pen.cur",         "label": "手写",           "systemId": null },
+    { "registry": "No",          "file": "no.cur",          "label": "不可用",         "systemId": 32648 },
+    { "registry": "SizeNS",      "file": "size_ns.cur",     "label": "垂直调整大小",   "systemId": 32645 },
+    { "registry": "SizeWE",      "file": "size_we.cur",     "label": "水平调整大小",   "systemId": 32644 },
+    { "registry": "SizeNWSE",    "file": "size_nwse.cur",   "label": "沿对角线调整 1", "systemId": 32642 },
+    { "registry": "SizeNESW",    "file": "size_nesw.cur",   "label": "沿对角线调整 2", "systemId": 32643 },
+    { "registry": "SizeAll",     "file": "size_all.cur",    "label": "移动",           "systemId": 32646 },
+    { "registry": "UpArrow",     "file": "up.cur",          "label": "候选选择",       "systemId": 32516 },
+    { "registry": "Hand",        "file": "hand.cur",        "label": "链接选择",       "systemId": 32649 },
+    { "registry": "Pin",         "file": "pin.cur",         "label": "位置选择",       "systemId": 32671 },
+    { "registry": "Person",      "file": "person.cur",      "label": "人员选择",       "systemId": 32672 }
+  ]
+}

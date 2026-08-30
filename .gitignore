@@ -1,0 +1,5 @@
+src/TahoeCursorStudio/bin/
+src/TahoeCursorStudio/obj/
+artifacts/
+dist/
+.nuget/

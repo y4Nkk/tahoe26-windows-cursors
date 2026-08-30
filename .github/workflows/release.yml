@@ -1,0 +1,90 @@
+name: 创建正式发布
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 要创建的版本标签，例如 v1.0.0
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: 构建、验证并创建 GitHub Release
+    runs-on: windows-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
+    steps:
+      - name: 取出源码
+        uses: actions/checkout@v6
+
+      - name: 校验版本标签
+        id: version
+        shell: pwsh
+        run: |
+          if ($env:RELEASE_TAG -notmatch '^v(\d+\.\d+\.\d+)$') {
+            throw '版本标签必须严格使用 v主版本.次版本.修订版本，例如 v1.0.0。'
+          }
+          "version=$($Matches[1])" >> $env:GITHUB_OUTPUT
+
+      - name: 安装 .NET 8 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.4xx
+
+      - name: 还原依赖
+        run: dotnet restore .\src\TahoeCursorStudio\TahoeCursorStudio.csproj
+
+      - name: 发布带版本号的自包含单文件程序
+        run: >-
+          dotnet publish .\src\TahoeCursorStudio\TahoeCursorStudio.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          --no-restore
+          --output .\发布包
+          -p:Version=${{ steps.version.outputs.version }}
+          -p:AssemblyVersion=${{ steps.version.outputs.version }}.0
+          -p:FileVersion=${{ steps.version.outputs.version }}.0
+
+      - name: 执行资源自检
+        shell: pwsh
+        run: |
+          $程序 = Join-Path $PWD '发布包\TahoeCursorStudio.exe'
+          $报告 = Join-Path $PWD '发布包\自检报告.json'
+          $进程 = Start-Process -FilePath $程序 -ArgumentList @('--self-test', $报告, '--quiet') -Wait -PassThru
+          if ($进程.ExitCode -ne 0) {
+            throw "内置自检失败，退出码：$($进程.ExitCode)"
+          }
+          $结果 = Get-Content -LiteralPath $报告 -Raw | ConvertFrom-Json
+          if (-not $结果.Success) {
+            throw '内置自检报告未通过。'
+          }
+
+      - name: 生成校验和
+        shell: pwsh
+        run: |
+          $程序 = Join-Path $PWD '发布包\TahoeCursorStudio.exe'
+          $内部自检报告 = Join-Path $PWD '发布包\自检报告.json'
+          $公开自检报告 = Join-Path $PWD '发布包\SelfTestReport.json'
+          $哈希 = (Get-FileHash -LiteralPath $程序 -Algorithm SHA256).Hash.ToLowerInvariant()
+          Copy-Item -LiteralPath $内部自检报告 -Destination $公开自检报告 -Force
+          "$哈希  TahoeCursorStudio.exe" | Set-Content -LiteralPath (Join-Path $PWD '发布包\SHA256SUMS.txt') -Encoding ascii
+
+      - name: 创建 GitHub Release 并上传 EXE
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create $env:RELEASE_TAG
+          .\发布包\TahoeCursorStudio.exe
+          .\发布包\SHA256SUMS.txt
+          .\发布包\SelfTestReport.json
+          --title "Tahoe 26 光标主题工作室 $env:RELEASE_TAG"
+          --generate-notes

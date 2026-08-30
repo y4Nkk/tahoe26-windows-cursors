@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="AppName">光标主题工作室</sys:String>
+    <sys:String x:Key="Subtitle">预览 Windows 当前光标配置，检查 256×256 像素差异，并立即应用完整主题。</sys:String>
+    <sys:String x:Key="DarkVariant">深色光标</sys:String>
+    <sys:String x:Key="LightVariant">浅色光标</sys:String>
+    <sys:String x:Key="ChooseTheme">选择主题</sys:String>
+    <sys:String x:Key="RefreshDiff">刷新差异</sys:String>
+    <sys:String x:Key="ApplyNow">立即应用</sys:String>
+    <sys:String x:Key="ColumnRole">角色</sys:String>
+    <sys:String x:Key="ColumnActive">当前 Windows 配置</sys:String>
+    <sys:String x:Key="ColumnTarget">目标主题光标</sys:String>
+    <sys:String x:Key="ColumnDiff">像素差异</sys:String>
+    <sys:String x:Key="ColumnResult">结果 / 资源</sys:String>
+    <sys:String x:Key="SystemRole">系统标准角色</sys:String>
+    <sys:String x:Key="RegistryRole">仅注册表角色</sys:String>
+    <sys:String x:Key="Matching">完全一致</sys:String>
+    <sys:String x:Key="Loading">正在载入主题……</sys:String>
+    <sys:String x:Key="Applying">正在安装持久光标方案并修复当前 Windows 会话……</sys:String>
+    <sys:String x:Key="Ready">就绪。当前 Windows 配置与目标资源统一到 CUR 标准上限 256×256。</sys:String>
+    <sys:String x:Key="AppliedTitle">光标主题已应用</sys:String>
+    <sys:String x:Key="ErrorTitle">光标主题工作室</sys:String>
+</ResourceDictionary>

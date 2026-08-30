@@ -1,0 +1,138 @@
+name: 持续集成
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: 构建并执行光标资源自检
+    runs-on: windows-latest
+
+    steps:
+      - name: 取出源码
+        uses: actions/checkout@v6
+
+      - name: 安装 .NET 8 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.4xx
+
+      - name: 还原依赖
+        run: dotnet restore .\src\TahoeCursorStudio\TahoeCursorStudio.csproj
+
+      - name: 发布自包含单文件程序
+        run: >-
+          dotnet publish .\src\TahoeCursorStudio\TahoeCursorStudio.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          --no-restore
+          --output .\发布包
+
+      - name: 验证主题资源与 256 像素预览
+        shell: pwsh
+        run: |
+          $程序 = Join-Path $PWD '发布包\TahoeCursorStudio.exe'
+          $报告 = Join-Path $PWD '发布包\自检报告.json'
+          $进程 = Start-Process -FilePath $程序 -ArgumentList @('--self-test', $报告, '--quiet') -Wait -PassThru
+          if ($进程.ExitCode -ne 0) {
+            throw "内置自检失败，退出码：$($进程.ExitCode)"
+          }
+          $结果 = Get-Content -LiteralPath $报告 -Raw | ConvertFrom-Json
+          if (-not $结果.Success) {
+            throw '内置自检报告未通过。'
+          }
+          Get-Content -LiteralPath $报告 -Raw
+
+      - name: 保存可下载的测试构建
+        uses: actions/upload-artifact@v4
+        with:
+          name: TahoeCursorStudio-win-x64
+          path: |
+            发布包/TahoeCursorStudio.exe
+            发布包/自检报告.json
+          if-no-files-found: error
+          retention-days: 14
+
+  publish_latest:
+    name: 发布 latest 自动构建
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    permissions:
+      actions: read
+      contents: write
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出当前发布提交
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: 下载已验证的发布产物
+        uses: actions/download-artifact@v5
+        with:
+          name: TahoeCursorStudio-win-x64
+          path: .\发布包
+
+      - name: 生成 SHA-256 校验和
+        shell: pwsh
+        run: |
+          $程序 = Join-Path $PWD '发布包\TahoeCursorStudio.exe'
+          $内部自检报告 = Join-Path $PWD '发布包\自检报告.json'
+          $公开自检报告 = Join-Path $PWD '发布包\SelfTestReport.json'
+          $校验文件 = Join-Path $PWD '发布包\SHA256SUMS.txt'
+          Copy-Item -LiteralPath $内部自检报告 -Destination $公开自检报告 -Force
+          $哈希 = (Get-FileHash -LiteralPath $程序 -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$哈希  TahoeCursorStudio.exe" | Set-Content -LiteralPath $校验文件 -Encoding ascii
+
+      - name: 创建或更新 latest 自动预发布
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $程序 = Join-Path $PWD '发布包\TahoeCursorStudio.exe'
+          $校验文件 = Join-Path $PWD '发布包\SHA256SUMS.txt'
+          $自检报告 = Join-Path $PWD '发布包\SelfTestReport.json'
+          $说明文件 = Join-Path $env:RUNNER_TEMP 'latest-release-notes.md'
+          $短提交 = $env:GITHUB_SHA.Substring(0, 7)
+          @"
+          这是由 main 分支持续集成自动生成的滚动预发布，不等同于固定语义版本。
+
+          - 源提交：[$短提交](https://github.com/$env:GITHUB_REPOSITORY/commit/$env:GITHUB_SHA)
+          - 构建运行：[#$env:GITHUB_RUN_NUMBER](https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID)
+          - 内容：TahoeCursorStudio.exe、SHA256SUMS.txt、SelfTestReport.json
+          - 更新规则：仅在构建及全部 256×256 资源自检通过后覆盖此 Release 的资产。
+          "@ | Set-Content -LiteralPath $说明文件 -Encoding utf8
+
+          & gh release view latest --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            # GitHub CLI 的 --target 不会移动既有标签；滚动 Release 必须同步实际 refs/tags/latest。
+            git tag --force latest $env:GITHUB_SHA
+            git push origin refs/tags/latest --force
+            if ($LASTEXITCODE -ne 0) {
+              throw "无法把 latest 标签同步到当前提交，退出码：$LASTEXITCODE"
+            }
+            & gh release edit latest --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title '最新自动构建（main）' --notes-file $说明文件 --prerelease
+          }
+          else {
+            & gh release create latest --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title '最新自动构建（main）' --notes-file $说明文件 --prerelease --latest=false
+          }
+          if ($LASTEXITCODE -ne 0) {
+            throw "无法创建或更新 latest 自动预发布，退出码：$LASTEXITCODE"
+          }
+
+          # 早期中文文件名在 GitHub CLI 上传链路中被归一化为 default.json；删除该旧资产。
+          & gh release delete-asset latest default.json --yes --repo $env:GITHUB_REPOSITORY 2>$null
+          & gh release upload latest $程序 $校验文件 $自检报告 --clobber --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) {
+            throw "无法上传 latest 自动预发布资产，退出码：$LASTEXITCODE"
+          }
