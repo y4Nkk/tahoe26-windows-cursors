@@ -1,16 +1,16 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Color x:Key="WindowColor">#0D0D0F</Color>
-    <Color x:Key="SurfaceColor">#1C1C20</Color>
-    <Color x:Key="SurfaceAltColor">#202025</Color>
-    <Color x:Key="SurfaceRaisedColor">#2A2A2F</Color>
-    <Color x:Key="BorderColor">#3A3A40</Color>
-    <Color x:Key="TextColor">#F5F5F7</Color>
-    <Color x:Key="MutedColor">#A4A4AC</Color>
-    <Color x:Key="PrimaryColor">#0A84FF</Color>
-    <Color x:Key="PrimaryHoverColor">#409CFF</Color>
-    <Color x:Key="PrimaryPressedColor">#0071E3</Color>
-    <Color x:Key="GoodColor">#30D158</Color>
+    <Color x:Key="WindowColor">#F5F5F7</Color>
+    <Color x:Key="SurfaceColor">#FFFFFF</Color>
+    <Color x:Key="SurfaceAltColor">#FAFAFC</Color>
+    <Color x:Key="SurfaceRaisedColor">#E8E8ED</Color>
+    <Color x:Key="BorderColor">#D2D2D7</Color>
+    <Color x:Key="TextColor">#1D1D1F</Color>
+    <Color x:Key="MutedColor">#6E6E73</Color>
+    <Color x:Key="PrimaryColor">#0071E3</Color>
+    <Color x:Key="PrimaryHoverColor">#2B8AEF</Color>
+    <Color x:Key="PrimaryPressedColor">#0060C0</Color>
+    <Color x:Key="GoodColor">#34C759</Color>
     <Color x:Key="WarningColor">#FF9F0A</Color>
     <SolidColorBrush x:Key="WindowBrush" Color="{StaticResource WindowColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
@@ -50,8 +50,8 @@
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Border" Property="Background" Value="#3A3A40" /></Trigger>
-                        <Trigger Property="IsPressed" Value="True"><Setter TargetName="Border" Property="Background" Value="#46464D" /></Trigger>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Border" Property="Background" Value="#DCDCE3" /></Trigger>
+                        <Trigger Property="IsPressed" Value="True"><Setter TargetName="Border" Property="Background" Value="#D0D0D8" /></Trigger>
                         <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.48" /></Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -61,7 +61,7 @@
 
     <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource PillButton}">
         <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
-        <Setter Property="BorderBrush" Value="#006CDA" />
+        <Setter Property="BorderBrush" Value="#0058A8" />
         <Setter Property="Padding" Value="26,11" />
         <Setter Property="Template">
             <Setter.Value>

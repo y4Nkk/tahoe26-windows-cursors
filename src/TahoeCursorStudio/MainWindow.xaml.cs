@@ -42,9 +42,9 @@ public partial class MainWindow : Window
     private void OnSourceInitialized(object? sender, EventArgs eventArgs)
     {
         var handle = new WindowInteropHelper(this).Handle;
-        var dark = 1;
+        var useDarkMode = 0;
         var rounded = 2;
-        NativeMethods.DwmSetWindowAttribute(handle, 20, ref dark, sizeof(int));
+        NativeMethods.DwmSetWindowAttribute(handle, 20, ref useDarkMode, sizeof(int));
         NativeMethods.DwmSetWindowAttribute(handle, 33, ref rounded, sizeof(int));
     }
 

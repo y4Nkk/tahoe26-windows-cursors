@@ -25,7 +25,7 @@
                             <Trigger Property="IsChecked" Value="True"><Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryBrush}" /></Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions><Condition Property="IsMouseOver" Value="True" /><Condition Property="IsChecked" Value="False" /></MultiTrigger.Conditions>
-                                <Setter TargetName="Border" Property="Background" Value="#3A3A40" />
+                                <Setter TargetName="Border" Property="Background" Value="#DCDCE3" />
                             </MultiTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -54,7 +54,7 @@
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                     <TextBlock Text="{Binding ThemeTitle}" FontFamily="Segoe UI Variable Display, Segoe UI"
                                FontSize="30" FontWeight="Bold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                    <Border Grid.Column="1" Background="#17171B" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                    <Border Grid.Column="1" Background="#FFFFFF" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
                             CornerRadius="13" Padding="4" Margin="18,0,0,0">
                         <StackPanel Orientation="Horizontal">
                             <RadioButton GroupName="Variant" Style="{StaticResource SegmentButton}" Content="{DynamicResource DarkVariant}"
@@ -70,8 +70,8 @@
 
                 <Grid Grid.Row="2" Margin="0,14,0,0">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <Border Background="#19442A" BorderBrush="#27693F" BorderThickness="1" CornerRadius="9" Padding="12,6">
-                        <TextBlock Text="{Binding SystemStatus}" Foreground="#7CE2B1" FontSize="12" FontWeight="SemiBold" />
+                    <Border Background="#E6F6EC" BorderBrush="#B7E3C8" BorderThickness="1" CornerRadius="9" Padding="12,6">
+                        <TextBlock Text="{Binding SystemStatus}" Foreground="#1E8A45" FontSize="12" FontWeight="SemiBold" />
                     </Border>
                     <TextBlock Grid.Column="1" Text="{Binding Summary}" Foreground="{StaticResource MutedBrush}"
                                FontSize="12" VerticalAlignment="Center" Margin="18,0,0,0" />
@@ -91,7 +91,7 @@
                 </Grid>
             </Grid>
 
-            <Border Grid.Row="1" Background="#17171B" BorderBrush="#2A2A2F" BorderThickness="1" CornerRadius="13" Margin="18,1,18,3">
+            <Border Grid.Row="1" Background="#FFFFFF" BorderBrush="#E3E3E9" BorderThickness="1" CornerRadius="13" Margin="18,1,18,3">
                 <Grid Margin="18,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="212" /><ColumnDefinition Width="155" /><ColumnDefinition Width="155" />
@@ -144,12 +144,12 @@
                                             CornerRadius="10" Width="160" Height="30" HorizontalAlignment="Left">
                                         <Border.Style>
                                             <Style TargetType="Border">
-                                                <Setter Property="Background" Value="#5B1E33" />
-                                                <Setter Property="BorderBrush" Value="#852A46" />
+                                                <Setter Property="Background" Value="#FCEBEE" />
+                                                <Setter Property="BorderBrush" Value="#F0BAC6" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsMatching}" Value="True">
-                                                        <Setter Property="Background" Value="#1F5333" />
-                                                        <Setter Property="BorderBrush" Value="#2D7546" />
+                                                        <Setter Property="Background" Value="#E6F6EC" />
+                                                        <Setter Property="BorderBrush" Value="#B7E3C8" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -157,10 +157,10 @@
                                         <TextBlock Text="{Binding ResultText}" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="#FF85A0" />
+                                                    <Setter Property="Foreground" Value="#C1355C" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsMatching}" Value="True">
-                                                            <Setter Property="Foreground" Value="#7CE2B1" />
+                                                            <Setter Property="Foreground" Value="#1E8A45" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -175,7 +175,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <Grid Grid.Row="3" Background="#141417">
+            <Grid Grid.Row="3" Background="#EBEBF0">
                 <TextBlock Text="{Binding Footer}" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="24,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                 <ProgressBar IsIndeterminate="True" Height="2" VerticalAlignment="Top" Background="Transparent" Foreground="{StaticResource PrimaryBrush}"
                              Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
