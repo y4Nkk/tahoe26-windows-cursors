@@ -65,7 +65,7 @@ public sealed class CursorInstaller
                     continue;
                 }
                 var path = Path.Combine(destination, role.File);
-                var cursor = NativeMethods.LoadImageW(0, path, NativeMethods.ImageCursor, 0, 0, NativeMethods.LrLoadFromFile);
+                var cursor = NativeMethods.LoadImageW(0, path, NativeMethods.ImageCursor, 0, 0, NativeMethods.LrLoadFromFile | NativeMethods.LrDefaultSize);
                 if (cursor == 0)
                 {
                     failures.Add($"{role.Registry}（加载失败：{Marshal.GetLastWin32Error()}）");
@@ -126,7 +126,7 @@ public sealed class CursorInstaller
             {
                 var path = cursorKey.GetValue(role.Key) as string;
                 if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) continue;
-                var handle = NativeMethods.LoadImageW(0, path, NativeMethods.ImageCursor, 0, 0, NativeMethods.LrLoadFromFile);
+                var handle = NativeMethods.LoadImageW(0, path, NativeMethods.ImageCursor, 0, 0, NativeMethods.LrLoadFromFile | NativeMethods.LrDefaultSize);
                 if (handle == 0) continue;
                 if (!NativeMethods.SetSystemCursor(handle, role.Value.SystemId!.Value)) NativeMethods.DestroyCursor(handle);
             }
@@ -141,7 +141,11 @@ public sealed class CursorInstaller
         using var backup = appKey.CreateSubKey("CursorBackup", true)
             ?? throw new InvalidOperationException("无法创建光标备份。");
         var currentScheme = cursorKey.GetValue(string.Empty) as string ?? string.Empty;
-        var existingIsTahoe = currentScheme.StartsWith("Tahoe 26", StringComparison.OrdinalIgnoreCase);
+        var appManagedRoot = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TahoeCursorStudio");
+        var existingIsTahoe = currentScheme.StartsWith("Tahoe 26", StringComparison.OrdinalIgnoreCase)
+            || roles.Any(role => (cursorKey.GetValue(role.Registry) as string)
+                ?.Contains(appManagedRoot, StringComparison.OrdinalIgnoreCase) == true);
         foreach (var role in roles)
         {
             var existing = existingIsTahoe ? null : cursorKey.GetValue(role.Registry) as string;

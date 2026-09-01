@@ -6,6 +6,7 @@ internal static class NativeMethods
 {
     internal const uint ImageCursor = 2;
     internal const uint LrLoadFromFile = 0x0010;
+    internal const uint LrDefaultSize = 0x0040;
     internal const uint DiNormal = 0x0003;
     internal const uint SpiSetCursors = 0x0057;
     internal const uint SpifUpdateIniFile = 0x0001;
