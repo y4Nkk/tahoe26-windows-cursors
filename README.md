@@ -75,7 +75,7 @@ dist\TahoeCursorStudio.exe
 3. 检查全部 17 个角色的“当前 Windows 配置”“目标主题光标”和“像素差异”。
 4. 点击“立即应用”。
 
-应用自身会把当前选择持久化为 Windows 光标方案。若需要稳定的开始菜单和桌面入口，可执行：
+应用自身会把当前选择持久化为 Windows 光标方案。点击“恢复默认”可一键还原：优先恢复首次应用前自动备份的光标方案，没有备份时还原为 Windows 默认 aero 光标。若需要稳定的开始菜单和桌面入口，可执行：
 
 ```powershell
 & '.\dist\TahoeCursorStudio.exe' --install

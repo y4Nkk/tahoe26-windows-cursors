@@ -8,6 +8,7 @@
     <sys:String x:Key="ChooseTheme">选择主题</sys:String>
     <sys:String x:Key="RefreshDiff">刷新差异</sys:String>
     <sys:String x:Key="ApplyNow">立即应用</sys:String>
+    <sys:String x:Key="RestoreDefault">恢复默认</sys:String>
     <sys:String x:Key="ColumnRole">角色</sys:String>
     <sys:String x:Key="ColumnActive">当前 Windows 配置</sys:String>
     <sys:String x:Key="ColumnTarget">目标主题光标</sys:String>

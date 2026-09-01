@@ -45,6 +45,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
         RefreshCommand = new AsyncRelayCommand(RefreshAsync, () => !IsBusy);
         ApplyCommand = new AsyncRelayCommand(ApplyAsync, () => !IsBusy);
+        RestoreDefaultCommand = new AsyncRelayCommand(RestoreDefaultAsync, () => !IsBusy);
         ChooseThemeCommand = new RelayCommand(_ => ChooseTheme(), _ => !IsBusy);
         SelectVariantCommand = new RelayCommand(SelectVariant, _ => !IsBusy);
     }
@@ -52,6 +53,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     public ObservableCollection<CursorRoleViewModel> Roles { get; } = [];
     public AsyncRelayCommand RefreshCommand { get; }
     public AsyncRelayCommand ApplyCommand { get; }
+    public AsyncRelayCommand RestoreDefaultCommand { get; }
     public RelayCommand ChooseThemeCommand { get; }
     public RelayCommand SelectVariantCommand { get; }
 
@@ -71,6 +73,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(CanInteract));
             RefreshCommand.RaiseCanExecuteChanged();
             ApplyCommand.RaiseCanExecuteChanged();
+            RestoreDefaultCommand.RaiseCanExecuteChanged();
             ChooseThemeCommand.RaiseCanExecuteChanged();
             SelectVariantCommand.RaiseCanExecuteChanged();
         }
@@ -134,6 +137,25 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         catch (Exception exception)
         {
             Footer = $"应用失败：{exception.Message}";
+            _showError(exception.Message, "光标主题工作室");
+        }
+        finally { IsBusy = false; }
+    }
+
+    private async Task RestoreDefaultAsync()
+    {
+        IsBusy = true;
+        Footer = "正在恢复默认光标方案……";
+        try
+        {
+            await Task.Run(_installer.RestorePreviousScheme);
+            await RefreshCoreAsync();
+            _showInformation("已恢复应用主题前备份的光标方案；没有备份时已还原为 Windows 默认 aero 光标。", "光标已恢复默认");
+            Footer = "已恢复默认光标。";
+        }
+        catch (Exception exception)
+        {
+            Footer = $"恢复失败：{exception.Message}";
             _showError(exception.Message, "光标主题工作室");
         }
         finally { IsBusy = false; }
